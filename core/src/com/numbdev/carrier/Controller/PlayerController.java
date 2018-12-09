@@ -26,7 +26,7 @@ public class PlayerController implements Controller {
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             // so big delay :(
-            player.applyForceToCenter(0, 10000, false);
+            player.applyForceToCenter(0, 300, false);
         }
         player.setLinearVelocity(force * 5, player.getLinearVelocity().y);
     }
