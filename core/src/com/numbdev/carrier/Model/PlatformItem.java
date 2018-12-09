@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import static com.numbdev.carrier.Utils.Constants.PPM;
+
 public class PlatformItem {
 
     private Body item;
@@ -24,7 +26,7 @@ public class PlatformItem {
         def.fixedRotation = true;
         pBody = world.createBody(def);
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(100, 12);
+        shape.setAsBox(3000f / PPM, 300f / PPM);
         pBody.createFixture(shape, 1.0f);
         shape.dispose();
         this.item = pBody;
