@@ -3,6 +3,9 @@ package com.numbdev.carrier.View.Stage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -12,6 +15,7 @@ import com.numbdev.carrier.Enum.ControllerType;
 import com.numbdev.carrier.Model.PlatformItem;
 import com.numbdev.carrier.Model.Player;
 import com.numbdev.carrier.Utils.ControllUtil;
+import com.numbdev.carrier.Utils.TiledUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +24,20 @@ import static com.numbdev.carrier.Utils.Constants.SCALE;
 
 public final class GameStage {
 
+    private static float GRAVITY = 0; //-9.8f
+
     private World world;
     private Box2DDebugRenderer renderer;
     private List<PlatformItem> blocks;
     private List<Controller> controllers;
     private Player player;
     private OrthographicCamera camera;
+    private OrthogonalTiledMapRenderer mapRenderer;
+    private TiledMap map;
 
     // TODO may be context?
     public GameStage() {
-        world = new World(new Vector2(0f, -9.8f), false);
+        world = new World(new Vector2(0f, GRAVITY), false);
         player = new Player();
         player.initPlayer(world);
         blocks = new ArrayList<>();
@@ -39,19 +47,27 @@ public final class GameStage {
         camera.setToOrtho(false, Gdx.graphics.getWidth()/SCALE, Gdx.graphics.getHeight()/SCALE);
         renderer = new Box2DDebugRenderer();
         initControllers();
+        map = new TmxMapLoader().load("map.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(map);
+        TiledUtils.mapControll(world, map.getLayers().get("qqq").getObjects());
     }
 
     public void update(float delta) {
-        world.step(1/60f, 6, 2);
-        updateControllers();
-        updateCamera();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderer.render(world, camera.combined.scl(SCALE));
+        world.step(1/60f, 6, 2);
+        mapRenderer.setView(camera);
+        updateControllers();
+        updateCamera();
+
+        renderer.render(world, camera.combined);
+        mapRenderer.render();
     }
 
     public void dispose() {
         world.dispose();
+        mapRenderer.dispose();
+        map.dispose();
     }
 
     // TODO

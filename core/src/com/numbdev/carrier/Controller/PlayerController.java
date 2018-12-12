@@ -15,20 +15,24 @@ public class PlayerController implements Controller {
 
     @Override
     public void update() {
-        int force = 0;
+        int forceX = 0;
+        int forceY = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            force -= 10;
+            forceX -= 10;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            force += 10;
+            forceX += 10;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            // so big delay :(
-            player.applyForceToCenter(0, 300, false);
+            forceY += 10;
         }
-        player.setLinearVelocity(force * 5, player.getLinearVelocity().y);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            forceY -= 10;
+        }
+        player.setLinearVelocity(forceX * 5, forceY * 5);
     }
 
     @Override
