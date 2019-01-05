@@ -19,7 +19,6 @@ public class CameraController implements Controller {
         position.y = y;
         camera.position.set(position);
         camera.update();
-        System.out.println(camera.position + " ===== " + player.getPlayerBody().getPosition());
     }
 
     @Override

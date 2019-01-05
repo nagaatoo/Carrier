@@ -1,6 +1,7 @@
 package com.numbdev.carrier.View.Stage;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -38,30 +39,40 @@ public final class GameStage {
     // TODO may be context?
     public GameStage() {
         world = new World(new Vector2(0f, GRAVITY), false);
-        player = new Player();
-        player.initPlayer(world);
         blocks = new ArrayList<>();
         blocks.add(new PlatformItem());
         blocks.forEach(block -> block.initPlatformItem(world));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth()/SCALE, Gdx.graphics.getHeight()/SCALE);
+        player = new Player(camera);
+        player.initPlayer(world);
         renderer = new Box2DDebugRenderer();
         initControllers();
         map = new TmxMapLoader().load("map.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
+
+        // polygon layer
         TiledUtils.mapControll(world, map.getLayers().get("qqq").getObjects());
     }
 
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
     public void update(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         world.step(1/60f, 6, 2);
         mapRenderer.setView(camera);
-        updateControllers();
-        updateCamera();
-
-        renderer.render(world, camera.combined);
         mapRenderer.render();
+        updateControllers();
+        player.updatePlayer();
+        updateCamera();
+        renderer.render(world, camera.combined);
     }
 
     public void dispose() {
@@ -84,7 +95,7 @@ public final class GameStage {
     private void updateCamera() {
         CameraController controller = (CameraController) ControllUtil
                 .getControllerByType(ControllerType.CAMERA, controllers).get(0);
-        float x = player.getPlayerBody().getPosition().x;//* PPM;
+        float x = player.getPlayerBody().getPosition().x;// *PPM;
         float y = player.getPlayerBody().getPosition().y;// * PPM;
         controller.update(x, y, player);
     }

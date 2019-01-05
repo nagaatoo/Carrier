@@ -15,6 +15,7 @@ public class PlayerController implements Controller {
 
     @Override
     public void update() {
+        // TODO freezing
         int forceX = 0;
         int forceY = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
